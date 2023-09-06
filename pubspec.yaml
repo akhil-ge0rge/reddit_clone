@@ -30,6 +30,8 @@ environment:
 dependencies:
   cloud_firestore: ^4.9.1
   cupertino_icons: ^1.0.2
+  dotted_border: ^2.0.0+3
+  file_picker: ^5.5.0
   firebase_auth: ^4.9.0
   firebase_core: ^2.15.1
   firebase_storage: ^11.2.6

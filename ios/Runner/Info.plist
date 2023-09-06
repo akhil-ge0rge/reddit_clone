@@ -46,16 +46,17 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>CFBundleURLTypes</key>
-<array>
+	<array>		
 	<dict>
 		<key>CFBundleTypeRole</key>
 		<string>Editor</string>
 		<key>CFBundleURLSchemes</key>
-		<array>
-			
-			<string>com.googleusercontent.apps.82095359622-07u946mbec7vp7l0ua4s207mrpf1qsmf</string>
+		<array>	
+		<string>com.googleusercontent.apps.82095359622-07u946mbec7vp7l0ua4s207mrpf1qsmf</string>
 		</array>
 	</dict>
-</array>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Explain why your app uses photo library</string>
 </dict>
 </plist>
