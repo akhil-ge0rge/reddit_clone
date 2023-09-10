@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/features/home/delegates/search_community_delegate.dart';
 import 'package:reddit_clone/features/home/drawer/community_list_drawer.dart';
 
 import '../../auth/controller/auth_controller.dart';
@@ -15,18 +16,21 @@ class HomeScreen extends ConsumerWidget {
     final user = ref.watch(userProvider)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        title: const Text("Home"),
         centerTitle: false,
         leading: Builder(builder: (ctx) {
           return IconButton(
             onPressed: () => displayDrawer(ctx),
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
           );
         }),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                  context: context, delegate: SearchCommunityDelegate(ref));
+            },
+            icon: const Icon(Icons.search),
           ),
           IconButton(
             onPressed: () {},
