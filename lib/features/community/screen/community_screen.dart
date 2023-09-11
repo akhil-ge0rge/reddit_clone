@@ -4,6 +4,7 @@ import 'package:reddit_clone/core/common/error_text.dart';
 import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
+import 'package:reddit_clone/models/community_model.dart';
 import 'package:routemaster/routemaster.dart';
 
 class CommunityScreen extends ConsumerWidget {
@@ -12,6 +13,12 @@ class CommunityScreen extends ConsumerWidget {
 
   void navigateToModTools(BuildContext context) {
     Routemaster.of(context).push("/mod-tools/$name");
+  }
+
+  void joinCommunity(WidgetRef ref, Community community, BuildContext context) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinCommunity(context, community);
   }
 
   @override
@@ -66,11 +73,12 @@ class CommunityScreen extends ConsumerWidget {
                                       style: ElevatedButton.styleFrom(),
                                       child: const Text("Mod Tools"))
                                   : OutlinedButton(
-                                      onPressed: () {},
+                                      onPressed: () => joinCommunity(
+                                          ref, community, context),
                                       style: ElevatedButton.styleFrom(),
                                       child: Text(
                                           community.members.contains(userId)
-                                              ? "Joined"
+                                              ? "Leave"
                                               : "Join")),
                             ],
                           ),
