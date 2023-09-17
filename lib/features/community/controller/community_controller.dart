@@ -124,4 +124,15 @@ class CommunityController extends StateNotifier<bool> {
       }
     });
   }
+
+  void addModsCommunity(
+    BuildContext context,
+    String communityName,
+    List<String> uids,
+  ) async {
+    final res =
+        await _communityRepository.addModsCommunity(communityName, uids);
+    res.fold((l) => showSnackBar(context, l.message.toString()),
+        (r) => Routemaster.of(context).pop());
+  }
 }
