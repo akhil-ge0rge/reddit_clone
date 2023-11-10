@@ -155,4 +155,14 @@ class PostController extends StateNotifier<bool> {
     res.fold((l) => null,
         (r) => Fluttertoast.showToast(msg: "Post Deleted Successfully!"));
   }
+
+  void upVote(Post post) {
+    final uid = _ref.read(userProvider)!.uid;
+    _postRepository.upVote(post, uid);
+  }
+
+  void downVote(Post post) {
+    final uid = _ref.read(userProvider)!.uid;
+    _postRepository.downVote(post, uid);
+  }
 }
