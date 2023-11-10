@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reddit_clone/core/constants/firebase_constants.dart';
-
 import '../../../core/providers/failure.dart';
 import '../../../core/providers/firebase_providers.dart';
 import '../../../core/providers/type_def.dart';
+import '../../../models/community_model.dart';
 import '../../../models/post_model.dart';
 
 final postRepositoryProvider =
@@ -26,5 +26,20 @@ class PostRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  Stream<List<Post>> fetchUsersPost(List<Community> communities) {
+    return _post
+        .where(
+          'communityName',
+          whereIn: communities.map((e) => e.name).toList(),
+        )
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((event) => event.docs
+            .map(
+              (e) => Post.fromMap(e.data() as Map<String, dynamic>),
+            )
+            .toList());
   }
 }

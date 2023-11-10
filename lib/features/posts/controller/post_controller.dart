@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
+import 'package:reddit_clone/features/community/controller/community_controller.dart';
 import 'package:reddit_clone/features/posts/repository/post_repository.dart';
 import 'package:reddit_clone/models/community_model.dart';
 import 'package:reddit_clone/models/post_model.dart';
@@ -20,6 +21,12 @@ final postControllerProvider =
       ref: ref,
       postRepository: postRepository,
       storageRepository: storageRepository);
+});
+
+final userPostControllerProvider =
+    StreamProvider.family((ref, List<Community> communities) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchUsersPost(communities);
 });
 
 class PostController extends StateNotifier<bool> {
@@ -84,7 +91,7 @@ class PostController extends StateNotifier<bool> {
         commentCount: 0,
         username: user.name,
         uid: user.uid,
-        type: 'text',
+        type: 'link',
         createdAt: DateTime.now(),
         awards: [],
         link: link);
@@ -121,7 +128,7 @@ class PostController extends StateNotifier<bool> {
           commentCount: 0,
           username: user.name,
           uid: user.uid,
-          type: 'text',
+          type: 'image',
           createdAt: DateTime.now(),
           awards: [],
           description: r);
@@ -132,5 +139,13 @@ class PostController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       });
     });
+  }
+
+  Stream<List<Post>> fetchUsersPost(List<Community> communities) {
+    if (communities.isNotEmpty) {
+      return _postRepository.fetchUsersPost(communities);
+    } else {
+      return Stream.value([]);
+    }
   }
 }
