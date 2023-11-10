@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
 import 'package:reddit_clone/features/posts/repository/post_repository.dart';
@@ -147,5 +148,11 @@ class PostController extends StateNotifier<bool> {
     } else {
       return Stream.value([]);
     }
+  }
+
+  void deletePost(Post post) async {
+    final res = await _postRepository.deletePost(post);
+    res.fold((l) => null,
+        (r) => Fluttertoast.showToast(msg: "Post Deleted Successfully!"));
   }
 }
