@@ -7,6 +7,7 @@ import 'package:reddit_clone/core/providers/firebase_providers.dart';
 import 'package:reddit_clone/models/users_model.dart';
 
 import '../../../core/providers/type_def.dart';
+import '../../../models/post_model.dart';
 
 final userRepositoryProvider = Provider((ref) {
   return UserProfileRepository(firestore: ref.watch(firebaseProviders));
@@ -28,6 +29,20 @@ class UserProfileRepository {
     }
   }
 
+  Stream<List<Post>> getUserPosts(String uid) {
+    return _posts
+        .where('uid', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((event) => event.docs
+            .map(
+              (e) => Post.fromMap(e.data() as Map<String, dynamic>),
+            )
+            .toList());
+  }
+
   CollectionReference get _users =>
       _firestore.collection(FirebaseConstants.usersCollection);
+  CollectionReference get _posts =>
+      _firestore.collection(FirebaseConstants.postsCollection);
 }
