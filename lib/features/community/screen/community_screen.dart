@@ -25,7 +25,9 @@ class CommunityScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userId = ref.watch(userProvider)!.uid;
+    final user = ref.watch(userProvider)!;
+    final userId = user.uid;
+    final isGuest = !user.isAuthenticated;
     return Scaffold(
       body: ref.watch(getCommunityByNameProvider(name)).when(
             data: (community) => NestedScrollView(
@@ -68,20 +70,21 @@ class CommunityScreen extends ConsumerWidget {
                               style: const TextStyle(
                                   fontSize: 19, fontWeight: FontWeight.bold),
                             ),
-                            community.mods.contains(userId)
-                                ? OutlinedButton(
-                                    onPressed: () =>
-                                        navigateToModTools(context),
-                                    style: ElevatedButton.styleFrom(),
-                                    child: const Text("Mod Tools"))
-                                : OutlinedButton(
-                                    onPressed: () =>
-                                        joinCommunity(ref, community, context),
-                                    style: ElevatedButton.styleFrom(),
-                                    child: Text(
-                                        community.members.contains(userId)
-                                            ? "Leave"
-                                            : "Join")),
+                            if (!isGuest)
+                              community.mods.contains(userId)
+                                  ? OutlinedButton(
+                                      onPressed: () =>
+                                          navigateToModTools(context),
+                                      style: ElevatedButton.styleFrom(),
+                                      child: const Text("Mod Tools"))
+                                  : OutlinedButton(
+                                      onPressed: () => joinCommunity(
+                                          ref, community, context),
+                                      style: ElevatedButton.styleFrom(),
+                                      child: Text(
+                                          community.members.contains(userId)
+                                              ? "Leave"
+                                              : "Join")),
                           ],
                         ),
                         Padding(
