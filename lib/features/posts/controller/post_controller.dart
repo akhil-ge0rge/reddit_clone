@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
-import 'package:reddit_clone/features/community/controller/community_controller.dart';
 import 'package:reddit_clone/features/posts/repository/post_repository.dart';
 import 'package:reddit_clone/models/community_model.dart';
 import 'package:reddit_clone/models/post_model.dart';
@@ -13,6 +12,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/providers/storage_repository_provider.dart';
 import '../../../core/providers/utils.dart';
+import '../../../models/comment_model.dart';
 
 final postControllerProvider =
     StateNotifierProvider<PostController, bool>((ref) {
@@ -28,6 +28,15 @@ final userPostControllerProvider =
     StreamProvider.family((ref, List<Community> communities) {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.fetchUsersPost(communities);
+});
+
+final getPostByIDProvider = StreamProvider.family((ref, String postID) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getPostByID(postID);
+});
+final getPostCommentsProvider = StreamProvider.family((ref, String postID) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchPostComments(postID);
 });
 
 class PostController extends StateNotifier<bool> {
@@ -156,13 +165,38 @@ class PostController extends StateNotifier<bool> {
         (r) => Fluttertoast.showToast(msg: "Post Deleted Successfully!"));
   }
 
-  void upVote(Post post) {
+  void upVote(Post post) async {
     final uid = _ref.read(userProvider)!.uid;
     _postRepository.upVote(post, uid);
   }
 
-  void downVote(Post post) {
+  void downVote(Post post) async {
     final uid = _ref.read(userProvider)!.uid;
     _postRepository.downVote(post, uid);
+  }
+
+  Stream<Post> getPostByID(String postID) {
+    return _postRepository.getPostByID(postID);
+  }
+
+  void addComment(
+      {required BuildContext context,
+      required String text,
+      required Post post}) async {
+    final user = _ref.read(userProvider)!;
+    String commentID = Uuid().v1();
+    Comment comment = Comment(
+        id: commentID,
+        text: text,
+        createdAt: DateTime.now(),
+        postId: post.id,
+        username: user.name,
+        profilePic: user.profilePic);
+    final res = await _postRepository.addComment(comment);
+    res.fold((l) => Fluttertoast.showToast(msg: l.message), (r) => null);
+  }
+
+  Stream<List<Comment>> fetchPostComments(String postID) {
+    return _postRepository.fetchPostComments(postID);
   }
 }
