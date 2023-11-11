@@ -38,13 +38,22 @@ class PostCard extends ConsumerWidget {
     Routemaster.of(context).push('/posts/${post.id}/comments');
   }
 
+  void awardPost(
+      {required WidgetRef ref,
+      required String award,
+      required BuildContext context}) {
+    ref
+        .read(postControllerProvider.notifier)
+        .awardPost(post: post, award: award, context: context);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTypeImage = post.type == 'image';
     final isTypeText = post.type == 'text';
     final isTypeLink = post.type == 'link';
-    final currentTheme = ref.read(themeNotifierProvider);
-    final user = ref.read(userProvider);
+    final currentTheme = ref.watch(themeNotifierProvider);
+    final user = ref.watch(userProvider);
 
     return Column(
       children: [
@@ -116,6 +125,25 @@ class PostCard extends ConsumerWidget {
                                     ))
                             ],
                           ),
+                          if (post.awards.isNotEmpty) ...[
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 25,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: post.awards.length,
+                                itemBuilder: (context, index) {
+                                  final award = post.awards.elementAt(index);
+                                  return Image.asset(
+                                    Constants.awards[award]!,
+                                    height: 24,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                           Padding(
                             padding: const EdgeInsets.only(top: 10.0),
                             child: Text(
@@ -228,7 +256,46 @@ class PostCard extends ConsumerWidget {
                                     error: (error, stackTrace) =>
                                         ErrorWidget(error),
                                     loading: () => LoaderWidget(),
-                                  )
+                                  ),
+                              IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: GridView.builder(
+                                          shrinkWrap: true,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 4),
+                                          itemCount: user.awards.length,
+                                          itemBuilder: (context, index) {
+                                            final award =
+                                                user.awards.elementAt(index);
+
+                                            return GestureDetector(
+                                              onTap: () {
+                                                awardPost(
+                                                    ref: ref,
+                                                    award: award,
+                                                    context: context);
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Image.asset(
+                                                    Constants.awards[award]!),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.card_giftcard_outlined),
+                              )
                             ],
                           )
                         ],

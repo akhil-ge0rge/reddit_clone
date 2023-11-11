@@ -216,4 +216,24 @@ class PostController extends StateNotifier<bool> {
   Stream<List<Comment>> fetchPostComments(String postID) {
     return _postRepository.fetchPostComments(postID);
   }
+
+  void awardPost({
+    required Post post,
+    required String award,
+    required BuildContext context,
+  }) async {
+    final userId = _ref.read(userProvider)!.uid;
+    final res =
+        await _ref.read(postRepositoryProvider).awardPost(post, award, userId);
+    res.fold((l) => Fluttertoast.showToast(msg: l.message), (r) {
+      _ref
+          .read(userProfileControllerProvider.notifier)
+          .updateUserKarma(UserKarma.awardPost);
+      _ref.read(userProvider.notifier).update((state) {
+        state?.awards.remove(award);
+        return state;
+      });
+      Routemaster.of(context).pop();
+    });
+  }
 }
