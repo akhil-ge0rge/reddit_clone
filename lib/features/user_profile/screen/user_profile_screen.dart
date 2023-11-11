@@ -78,7 +78,7 @@ class UserProfileScreen extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text(
-                            "r/${userProfile.karma} Karma ",
+                            "${userProfile.karma} Karma ",
                             style: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.bold),
                           ),

@@ -27,7 +27,7 @@ class PostCard extends ConsumerWidget {
   }
 
   void navigateToUser(BuildContext context) {
-    Routemaster.of(context).push('/u/${post.uid}');
+    Routemaster.of(context).push('/user-profile/${post.uid}');
   }
 
   void navigateToCommunity(BuildContext context) {

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:reddit_clone/core/enums/enums.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/posts/repository/post_repository.dart';
+import 'package:reddit_clone/features/user_profile/controller/user_profile_controller.dart';
 import 'package:reddit_clone/models/community_model.dart';
 import 'package:reddit_clone/models/post_model.dart';
 import 'package:routemaster/routemaster.dart';
@@ -76,6 +78,9 @@ class PostController extends StateNotifier<bool> {
         awards: [],
         description: description);
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateUserKarma(UserKarma.textPost);
     state = false;
     res.fold((l) => showSnackBar(context, l.message.toString()), (r) {
       showSnackBar(context, "Post Added Successfully");
@@ -106,6 +111,9 @@ class PostController extends StateNotifier<bool> {
         awards: [],
         link: link);
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateUserKarma(UserKarma.linkPost);
     state = false;
     res.fold((l) => showSnackBar(context, l.message.toString()), (r) {
       showSnackBar(context, "Post Added Successfully");
@@ -143,6 +151,9 @@ class PostController extends StateNotifier<bool> {
           awards: [],
           description: r);
       final res = await _postRepository.addPost(post);
+      _ref
+          .read(userProfileControllerProvider.notifier)
+          .updateUserKarma(UserKarma.imagePost);
       state = false;
       res.fold((l) => showSnackBar(context, l.message.toString()), (r) {
         showSnackBar(context, "Post Added Successfully");
@@ -161,6 +172,9 @@ class PostController extends StateNotifier<bool> {
 
   void deletePost(Post post) async {
     final res = await _postRepository.deletePost(post);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateUserKarma(UserKarma.deletePost);
     res.fold((l) => null,
         (r) => Fluttertoast.showToast(msg: "Post Deleted Successfully!"));
   }
@@ -193,6 +207,9 @@ class PostController extends StateNotifier<bool> {
         username: user.name,
         profilePic: user.profilePic);
     final res = await _postRepository.addComment(comment);
+    _ref
+        .read(userProfileControllerProvider.notifier)
+        .updateUserKarma(UserKarma.comment);
     res.fold((l) => Fluttertoast.showToast(msg: l.message), (r) => null);
   }
 
