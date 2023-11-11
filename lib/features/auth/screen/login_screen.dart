@@ -4,6 +4,7 @@ import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/core/common/sign_in_button.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
+import 'package:reddit_clone/responsive/responsive.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -37,9 +38,12 @@ class LoginScreen extends ConsumerWidget {
       body: isLoading
           ? const LoaderWidget()
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 30,
+                Center(
+                  child: const SizedBox(
+                    height: 30,
+                  ),
                 ),
                 const Text(
                   "Dive into anything",
@@ -59,7 +63,7 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                SignInButton()
+                const Responsive(child: SignInButton())
               ],
             ),
     );

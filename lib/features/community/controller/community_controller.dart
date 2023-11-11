@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
@@ -90,18 +91,26 @@ class CommunityController extends StateNotifier<bool> {
     required BuildContext context,
     required File? profileFile,
     required File? bannerFile,
+    required Uint8List? profileWebFile,
+    required Uint8List? bannerWebFile,
     required Community community,
   }) async {
     state = true;
-    if (profileFile != null) {
+    if (profileFile != null || profileWebFile != null) {
       final res = await _storageRepository.storeFile(
-          path: 'communities/profile', id: community.name, file: profileFile);
+          path: 'communities/profile',
+          id: community.name,
+          file: profileFile,
+          webFile: profileWebFile);
       res.fold((l) => showSnackBar(context, l.message),
           (r) => community = community.copyWith(avatar: r));
     }
-    if (bannerFile != null) {
+    if (bannerFile != null || bannerWebFile != null) {
       final res = await _storageRepository.storeFile(
-          path: 'communities/banner', id: community.name, file: bannerFile);
+          path: 'communities/banner',
+          id: community.name,
+          file: bannerFile,
+          webFile: bannerWebFile);
       res.fold((l) => showSnackBar(context, l.message),
           (r) => community = community.copyWith(banner: r));
     }
